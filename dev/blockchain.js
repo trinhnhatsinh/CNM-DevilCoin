@@ -7,6 +7,7 @@
 const uuid = require("uuid/v1"); //generate unique transaction id.
 const sha256 = require("sha256");
 const currentNodeUrlSys = process.argv[3];
+const moment = require("moment");
 
 // /*function constructor for my Blockchain.*/
 // function Blockchain(privateKey, publicKey) {
@@ -53,7 +54,7 @@ Blockchain.prototype.createNewBlock = function (
   const newBlock = {
     index: this.chain.length + 1,
     timestamp: Date.now(),
-    date: new Date().toString(),
+    date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
     transactions: this.pendingTransactions,
     nonce: nonce,
     hash: hash,
@@ -78,12 +79,7 @@ Blockchain.prototype.createNewTransaction = function (
   const newTransaction = {
     transactionId: uuid().split("-").join(""),
     amount: amount,
-    date:
-      new Date().getDay().toString() +
-      "." +
-      new Date().getMonth().toString() +
-      "." +
-      new Date().getFullYear().toString(),
+    date: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
     sender: sender,
     recipient: recipient,
   };

@@ -11,10 +11,11 @@
   <link rel="icon" href="./img/logo.png" />
   <title>Devil Coin</title>
 
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-
   <!-- Custom fonts for this template-->
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
+
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+
   <link
     href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
     rel="stylesheet" />
@@ -41,34 +42,30 @@
               <div class="col-lg-6">
                 <div class="p-5">
                   <div class="text-center">
-                    <h1 class="h4 text-gray-900 mb-4">Đăng nhập ví!</h1>
+                    <h1 class="h4 text-gray-900 mb-4">Đăng nhập hệ thống!</h1>
                   </div>
                   <div ng-controller="loginController">
                     <form class="user" name="loginForm" novalidate onsubmit="return false;">
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-user" placeholder="Nhập private key của bạn"
-                          name="privateKey" ng-model="privateKey" value="01a853a0b6fa11eb81a92be046a6c180" required />
-                      </div>
-                      <div class="form-group">
-                        <input type="text" class="form-control form-control-user" placeholder="Nhập public key của bạn"
-                          name="publicKey" ng-model="publicKey"
-                          value="adcd5ef8a331e0c12d6e58f92a1dd2bcdd1d7377bf394a0eaefbf641209aa9a6" required />
-                      </div>
                       <div class="form-group">
                         <input type="password" class="form-control form-control-user" placeholder="Mật khẩu"
                           name="password" ng-model="password" value="123" />
                       </div>
 
-                      <a class="tip">
-                        <input type="submit" class="btn btn-primary btn-user btn-block" value="Truy cập ví"
-                          ng-click="login(privateKey, publicKey, password)"
-                          ng-disabled="registerForm.privateKey.$invalid || registerForm.publicKey.$invalid ||registerForm.password.$invalid" />
-                      </a>
+
+                      <label class="btn btn-primary btn-user btn-block"
+                        style="height: 45px; background-color: #FF6347;">
+                        Tải lên khóa của bạn
+                        <input id="file" name="file" type="file" style="visibility: hidden; margin-bottom: 15px;" />
+                      </label>
+
+                      <input type="submit" class="btn btn-primary btn-user btn-block" value="Đăng nhập"
+                        ng-click="login(password)"
+                        ng-disabled="registerForm.privateKey.$invalid || registerForm.publicKey.$invalid ||registerForm.password.$invalid" />
                     </form>
                   </div>
                   <hr />
                   <div class="text-center">
-                    <a class="small" href="register.html">Tạo mới ví!</a>
+                    <a class="small" href="register.html">Tạo mới tài khoản!</a>
                   </div>
                 </div>
               </div>
@@ -78,6 +75,8 @@
       </div>
     </div>
   </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 
   <!-- Bootstrap core JavaScript-->
   <script src="vendor/jquery/jquery.min.js"></script>
@@ -91,8 +90,32 @@
 
   <script>
     const app = angular.module("LoginExplorer", []);
-    app.controller("loginController", function ($scope, $http) {
-      $scope.login = function (privateKey, publicKey, password) {
+    app.controller("loginController", async function ($scope, $http) {
+      function readFileAsync(file) {
+        return new Promise((resolve, reject) => {
+          let reader = new FileReader();
+
+          reader.onloadend = (e) => {
+            resolve(e.target.result);
+          };
+
+          reader.onerror = reject;
+
+          reader.readAsBinaryString(file);
+        })
+      }
+
+      $scope.login = async function (password) {
+        const f = document.getElementById('file').files[0];
+        let privateKey = "";
+        let publicKey = "";
+
+        if (f) {
+          const data = JSON.parse(await readFileAsync(f));
+          privateKey = data.privateKey;
+          publicKey = data.publicKey;
+        }
+
         $http({
           url: "/login",
           method: "POST",

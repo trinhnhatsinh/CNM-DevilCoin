@@ -13,15 +13,6 @@
     <meta name="description" content="My Coin - Farmer">
     <meta name="keywords" content="My Coin, BlockChain, Coin of Farmer">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
-        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"
-        integrity="sha384-kW+oWsYx3YpxvjtZjFXqazFpA7UP/MbiY4jvs+RWZo2+N94PFZ36T6TFkc9O3qoB"
-        crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/mathjs@5.2.2/dist/math.min.js"></script>
-
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
@@ -40,14 +31,14 @@
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <ul class="navbar-nav sidebar sidebar-dark accordion menu-left" id="accordionSidebar">
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion menu-left" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">Devil Coin</div>
+                <div class="sidebar-brand-text mx-3">Devil Coin<sup>2</sup></div>
             </a>
 
             <!-- Divider -->
@@ -72,7 +63,7 @@
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="send-coin.html">Gửi tiền ảo</a>
+                        <a class="collapse-item" href="send-coin.html">Gửi tiền</a>
                         <a class="collapse-item" href="history.html">Lịch sử giao dịch</a>
                     </div>
                 </div>
@@ -96,7 +87,7 @@
             <div id="content">
 
                 <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow header">
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
@@ -160,11 +151,10 @@
                         <div class="topbar-divider d-none d-sm-block"></div>
 
                         <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
+                        <li class="nav-item dropdown no-arrow" ng-controller="walletController">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="noMemberID">Douglas
-                                    McGee</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{addressData}}</span>
                                 <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
@@ -230,7 +220,7 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Số tiền</div>
+                                                Tổng tiền</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">$ {{amount}}</div>
                                         </div>
                                         <div class="col-auto">
@@ -268,18 +258,18 @@
                     <!-- Content Row -->
                     <div class="card shadow mb-4" ng-controller="blockHistoryController">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Latest Blocks</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Danh sách Block</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <table class="table table-bordered" width="100%" cellspacing="0" id="blockHistoryTable">
                                     <thead>
                                         <tr>
                                             <th>idx</th>
                                             <th>Ngày tạo</th>
                                             <th>Nonce</th>
                                             <th>Hash</th>
-                                            <th>PreviousHash</th>
+                                            <th>Previous Hash</th>
                                         </tr>
                                     </thead>
                                     <tfoot>
@@ -288,11 +278,11 @@
                                             <th>Ngày tạo</th>
                                             <th>Nonce</th>
                                             <th>Hash</th>
-                                            <th>PreviousHash</th>
+                                            <th>Previous Hash</th>
                                         </tr>
                                     </tfoot>
                                     <tbody>
-                                        <tr class="col-2 text-truncate" ng-repeat="block in blocks track by $index">
+                                        <tr class="col-2" ng-repeat="block in blocks track by $index">
                                             <td class="text-truncate">
                                                 <div style="width: 50px;" class="text-truncate">
                                                     {{ block.idx }}
@@ -308,12 +298,12 @@
                                                     {{ block.nonce }}
                                                 </div>
                                             </td>
-                                            <td class="text-truncate">
+                                            <td>
                                                 <div style="width: 300px;" class="text-truncate">
                                                     {{ block.hash }}
                                                 </div>
                                             </td>
-                                            <td class="text-truncate">
+                                            <td>
                                                 <div style="width: 300px;" class="text-truncate">
                                                     {{ block.previousHash }}
                                                 </div>
@@ -331,12 +321,12 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <table class="table table-bordered" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
                                             <th>ID giao dịch</th>
                                             <th>Số lượng</th>
-                                            <th>Ngày gửi</th>
+                                            <th>Ngày chuyển</th>
                                             <th>Người gửi</th>
                                             <th>Người nhận</th>
                                         </tr>
@@ -345,7 +335,7 @@
                                         <tr>
                                             <th>ID giao dịch</th>
                                             <th>Số lượng</th>
-                                            <th>Ngày gửi</th>
+                                            <th>Ngày chuyển</th>
                                             <th>Người gửi</th>
                                             <th>Người nhận</th>
                                         </tr>
@@ -387,16 +377,16 @@
 
                     <div class="card shadow mb-4" ng-controller="pendingTransactionHistoryController">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Giao dịch cần xác thực</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Giao dịch chờ xác nhận</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <table class="table table-bordered" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
                                             <th>ID giao dịch</th>
                                             <th>Số lượng</th>
-                                            <th>Ngày gửi</th>
+                                            <th>Ngày chuyển</th>
                                             <th>Người gửi</th>
                                             <th>Người nhận</th>
                                         </tr>
@@ -405,7 +395,7 @@
                                         <tr>
                                             <th>ID giao dịch</th>
                                             <th>Số lượng</th>
-                                            <th>Ngày gửi</th>
+                                            <th>Ngày chuyển</th>
                                             <th>Người gửi</th>
                                             <th>Người nhận</th>
                                         </tr>
@@ -474,23 +464,30 @@
 
     <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+        aria-hidden="true" ng-controller="logoutController">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Bạn muốn đăng xuất khỏi hệ thống?</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-body">Chọn "Đăng xuất" nếu bạn muốn thoát khỏi ứng dụng.</div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy bỏ</button>
+                    <button type="button" ng-click="logout()" class="btn btn-primary">Đăng xuất</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"
+        integrity="sha384-kW+oWsYx3YpxvjtZjFXqazFpA7UP/MbiY4jvs+RWZo2+N94PFZ36T6TFkc9O3qoB"
+        crossorigin="anonymous"></script>
 
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
@@ -512,6 +509,16 @@
         }
 
         ////////////////////////////////////////////////////////////////////
+        app.controller('logoutController', function ($scope, $http) {
+            $scope.logout = function () {
+                localStorage.removeItem('publicKey');
+                localStorage.removeItem('privateKey');
+
+                window.location.href = "./login.html";
+            };
+        });
+
+        ////////////////////////////////////////////////////////////////////
         app.controller('walletController', function ($scope, $http) {
             $scope.addressData = localStorage.getItem('publicKey');
             $scope.amount = 0;
@@ -528,10 +535,8 @@
 
         ///////////////////////////////////////////////////////////////////
         app.controller('blockHistoryController', function ($scope, $http) {
-            $scope.addressData = localStorage.getItem('publicKey');
-
             $scope.init = function () {
-                $http.get(`/lasted-blocks/${$scope.addressData}`)
+                $http.get(`/lasted-blocks`)
                     .then(response => {
                         $scope.blocks = response.data.blocks;
                     });
@@ -540,10 +545,8 @@
 
         ///////////////////////////////////////////////////////////////////
         app.controller('transactionHistoryController', function ($scope, $http) {
-            $scope.addressData = localStorage.getItem('publicKey');
-
             $scope.init = function () {
-                $http.get(`/lasted-transactions/${$scope.addressData}`)
+                $http.get(`/lasted-transactions`)
                     .then(response => {
                         $scope.transactions = response.data.transactions;
                     });
@@ -552,10 +555,8 @@
 
         ///////////////////////////////////////////////////////////////////
         app.controller('pendingTransactionHistoryController', function ($scope, $http) {
-            $scope.addressData = localStorage.getItem('publicKey');
-
             $scope.init = function () {
-                $http.get(`/pending-transactions/${$scope.addressData}`)
+                $http.get(`/pending-transactions`)
                     .then(response => {
                         $scope.pendingTransactions = response.data.pendingTransactions;
                     });

@@ -14,7 +14,7 @@ const http = require("http");
 var server = http.createServer(app);
 var nodemailer = require("nodemailer");
 var forge = require("node-forge");
-const { re } = require("mathjs");
+const moment = require("moment");
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; //fixing nodemailer
 
 app.set("view engine", "ejs");
@@ -157,8 +157,14 @@ io.on("connection", (socket) => {
       nodes.forEach((node) => {
         node.addTransactionToPendingTransactions(newTransaction);
 
-        // io.clients().sockets[node.privateKey.toString()].pendingTransactions =
-        //   node.pendingTransactions; //add property to socket
+        fs.writeFile(
+          `data/backup/${node.publicKey}.json`,
+          JSON.stringify(node),
+          function (err) {
+            if (err) throw err;
+            console.log("write back up block chain complete!");
+          }
+        );
         pt = node.pendingTransactions;
       });
       io.clients().emit("PT", pt); //emit to all sockets
@@ -327,14 +333,19 @@ io.on("connection", (socket) => {
       backup.chain.push(newBlock);
       backup.pendingTransactions = [];
 
-      const idxCurrBlockChain = nodes.findIndex(
-        (e) =>
-          e.privateKey === backup.privateKey && e.publicKey === backup.publicKey
-      );
+      nodes.forEach((e) => {
+        e.chain.push(newBlock);
+        e.pendingTransactions = [];
 
-      if (idxCurrBlockChain !== -1) {
-        nodes[idxCurrBlockChain] = backup;
-      }
+        fs.writeFile(
+          `data/backup/${e.publicKey}.json`,
+          JSON.stringify(e),
+          function (err) {
+            if (err) throw err;
+            console.log("write back up block chain complete!");
+          }
+        );
+      });
 
       fs.writeFile(
         `data/backup/${address}.json`,
@@ -523,9 +534,20 @@ app.post("/login", async (req, res) => {
     }
   });
 
-  blockChains[idxBlockChain].chain = blockChains[idxLongest].chain;
-  blockChains[idxBlockChain].pendingTransactions =
-    blockChains[idxLongest].pendingTransactions;
+  if (blockChains[idxLongest].chain > blockChains[idxBlockChain].chain) {
+    blockChains[idxLongest].chain.forEach((e) => {
+      const idx = blockChains[idxBlockChain].chain.findIndex(
+        (chain) => chain.index === e.index
+      );
+
+      if (idx === -1) {
+        blockChains[idxBlockChain].chain.push(e);
+      }
+    });
+
+    blockChains[idxBlockChain].pendingTransactions =
+      blockChains[idxLongest].pendingTransactions;
+  }
 
   fs.writeFile(
     "data/block-chains.json",
@@ -576,13 +598,27 @@ app.post("/register", async (req, res) => {
   });
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
+  const rawBlockChains = fs.readFileSync("data/block-chains.json", "utf8");
+  const blockChains = rawBlockChains !== "" ? JSON.parse(rawBlockChains) : [];
   const blockChain = new Blockchain(privateKey, publicKey);
-  const transaction = blockChain.createNewTransaction(
-    1000000,
-    "system-reward",
-    publicKey
-  );
-  blockChain.chain[0].transactions.push(transaction);
+
+  let max = 0;
+  let idxLongest = 0;
+
+  if (blockChains.length > 0) {
+    blockChains.forEach((e, idx) => {
+      const len = e.chain.length;
+
+      if (len > max) {
+        max = len;
+        idxLongest = idx;
+      }
+    });
+
+    blockChain.chain = blockChains[idxLongest].chain;
+    blockChain.pendingTransactions =
+      blockChains[idxLongest].pendingTransactions;
+  }
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -596,8 +632,6 @@ app.post("/register", async (req, res) => {
   );
 
   ///////////////////////////////////////////////////////////////////////////////////////////////
-  const rawBlockChains = fs.readFileSync("data/block-chains.json", "utf8");
-  const blockChains = rawBlockChains !== "" ? JSON.parse(rawBlockChains) : [];
   blockChains.push(blockChain);
   fs.writeFile(
     "data/block-chains.json",
@@ -610,7 +644,7 @@ app.post("/register", async (req, res) => {
   ///////////////////////////////////////////////////////////////////////////////////////////////
 
   /*  -reward new user-  */
-  const requestOptions = {
+  const requestOptions1 = {
     uri: blockChain.currentNodeUrl + "/transaction/broadcast",
     method: "POST",
     body: {
@@ -620,7 +654,8 @@ app.post("/register", async (req, res) => {
     },
     json: true,
   };
-  rp(requestOptions);
+  rp(requestOptions1);
+
   res.json({
     note: true,
     newUser,
@@ -687,15 +722,25 @@ app.get("/address-info/:address", (req, res) => {
 });
 
 /*  -get lasted block by address-  */
-app.get("/lasted-blocks/:address", (req, res) => {
-  const address = req.params.address;
-  const blockchain = JSON.parse(
-    fs.readFileSync(`data/backup/${address}.json`, "utf8")
+app.get("/lasted-blocks", (req, res) => {
+  const blockChains = JSON.parse(
+    fs.readFileSync(`data/block-chains.json`, "utf8")
   );
+
+  let max = 0;
+  let idxLongest = 0;
+  blockChains.forEach((e, idx) => {
+    const len = e.chain.length;
+
+    if (len > max) {
+      max = len;
+      idxLongest = idx;
+    }
+  });
 
   const blocks = [];
 
-  const { chain } = blockchain;
+  const { chain } = blockChains[idxLongest];
 
   chain.forEach((e) => {
     blocks.push({
@@ -708,41 +753,89 @@ app.get("/lasted-blocks/:address", (req, res) => {
   });
 
   res.json({
-    blocks: blocks,
+    blocks: blocks.reverse(),
   });
 });
 
-/*  -get lasted transactions by address-  */
-app.get("/lasted-transactions/:address", (req, res) => {
-  const address = req.params.address;
-  const blockchain = JSON.parse(
-    fs.readFileSync(`data/backup/${address}.json`, "utf8")
+/*  -get lasted transactions  */
+app.get("/lasted-transactions", (req, res) => {
+  const blockChains = JSON.parse(
+    fs.readFileSync(`data/block-chains.json`, "utf8")
   );
+
+  let max = 0;
+  let idxLongest = 0;
+  blockChains.forEach((e, idx) => {
+    const len = e.chain.length;
+
+    if (len > max) {
+      max = len;
+      idxLongest = idx;
+    }
+  });
 
   let transactions = [];
 
-  const { chain } = blockchain;
+  const { chain } = blockChains[idxLongest];
 
   chain.forEach((e) => {
     transactions = transactions.concat(e.transactions);
   });
 
   res.json({
-    transactions: transactions,
+    transactions: transactions.reverse(),
   });
 });
 
-/*  -get pending transactions by address-  */
-app.get("/pending-transactions/:address", (req, res) => {
+/*  -get lasted transactions by address-  */
+app.get("/lasted-transactions/:address", (req, res) => {
   const address = req.params.address;
-  const blockchain = JSON.parse(
+  const blockChain = JSON.parse(
     fs.readFileSync(`data/backup/${address}.json`, "utf8")
   );
 
-  const { pendingTransactions } = blockchain;
+  let transactions = [];
+
+  const { chain } = blockChain;
+
+  chain.forEach((e) => {
+    transactions = transactions.concat(e.transactions);
+  });
+
+  let mineTransactions = [];
+
+  transactions.forEach((e) => {
+    if (e.sender === address || e.recipient === address) {
+      mineTransactions.push(e);
+    }
+  });
 
   res.json({
-    pendingTransactions: pendingTransactions,
+    transactions: mineTransactions,
+  });
+});
+
+/*  -get pending transactions  */
+app.get("/pending-transactions", (req, res) => {
+  const blockChains = JSON.parse(
+    fs.readFileSync(`data/block-chains.json`, "utf8")
+  );
+
+  let max = 0;
+  let idxLongest = 0;
+  blockChains.forEach((e, idx) => {
+    const len = e.chain.length;
+
+    if (len > max) {
+      max = len;
+      idxLongest = idx;
+    }
+  });
+
+  const { pendingTransactions } = blockChains[idxLongest];
+
+  res.json({
+    pendingTransactions: pendingTransactions.reverse(),
   });
 });
 

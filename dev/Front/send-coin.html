@@ -30,13 +30,13 @@
   <!-- Page Wrapper -->
   <div id="wrapper">
     <!-- Sidebar -->
-    <ul class="navbar-nav sidebar sidebar-dark accordion menu-left" id="accordionSidebar">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion menu-left" id="accordionSidebar">
       <!-- Sidebar - Brand -->
       <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
         <div class="sidebar-brand-icon rotate-n-15">
           <i class="fas fa-laugh-wink"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">Devil Coin</div>
+        <div class="sidebar-brand-text mx-3">Devil Coin<sup>2</sup></div>
       </a>
 
       <!-- Divider -->
@@ -61,7 +61,7 @@
         </a>
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="send-coin.html">Gửi tiền ảo</a>
+            <a class="collapse-item" href="send-coin.html">Gửi tiền</a>
             <a class="collapse-item" href="history.html">Lịch sử giao dịch</a>
           </div>
         </div>
@@ -161,7 +161,8 @@
             <li class="nav-item dropdown no-arrow">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="noMemberID">Douglas McGee</span>
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small"
+                  ng-controller="walletController">{{addressData}}</span>
                 <img class="img-profile rounded-circle" src="img/undraw_profile.svg" />
               </a>
               <!-- Dropdown - User Information -->
@@ -197,7 +198,7 @@
         <div class="container-fluid">
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Gửi tiền ảo</h1>
+            <h1 class="h3 mb-0 text-gray-800">Gửi tiền</h1>
           </div>
 
           <!-- Content Row -->
@@ -301,7 +302,7 @@
             <div ng-controller="transactionController" ng-init="acceptedTransaction">
               <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">
-                  Gửi tiền
+                  Giao dịch chuyển tiền
                 </h6>
               </div>
 
@@ -309,12 +310,13 @@
                 <form class="col-12 col-xl-6" name="sendCoinsForm" novalidate>
                   <div class="mb-3">
                     <h5 class="mt-2 mb-2 heading">Người nhận</h5>
-                    <input type="text" class="form-control text-sans-serif" placeholder="Nhập đại chỉ người nhận"
-                      name="pubKeyOfRecipient" ng-model="pubKeyOfRecipient" required />
+                    <input type="text" class="form-control text-sans-serif"
+                      placeholder="Nhập địa chỉ người nhận" name="pubKeyOfRecipient"
+                      ng-model="pubKeyOfRecipient" required />
                   </div>
 
                   <div class="mb-3 mrTop-40">
-                    <h5 class="mt-2 mb-2 heading">Số lượng gửi</h5>
+                    <h5 class="mt-2 mb-2 heading">Số lượng cần gửi</h5>
                     <input type="text" class="form-control text-sans-serif" placeholder="Ví dụ: 50"
                       name="amountToTransfer" ng-model="amountToTransfer" required />
                   </div>
@@ -322,8 +324,7 @@
                   <div class="mb-3 mrTop-40 d-flex justify-content-center">
                     <div data-toggle="modal" data-target="#transactionModal">
                       <a class="tip">
-                        <input type="submit" style="background-color: #fd7e14;border: 0;"
-                          class="btn btn-success pb_btn-pill" value="Gửi tiền"
+                        <input type="submit" class="btn btn-success pb_btn-pill" value="Gửi tiền"
                           ng-click="transactionCoins(amountToTransfer, pubKeyOfRecipient)"
                           ng-disabled="sendCoinsForm.amountToTransfer.$invalid || sendCoinsForm.pubKeyOfRecipient.$invalid" />
                       </a>
@@ -336,7 +337,7 @@
                       <div class="modal-content">
                         <div class="modal-header">
                           <h5 class="modal-title" id="exampleModalLabel">
-                            deal verification
+                            Xác nhận giao dịch
                           </h5>
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -346,30 +347,30 @@
                           <div class="row">
                             <div class="card card-body">
                               <h3 class="table-title" ng-if="acceptedTransaction">
-                                The transaction was completed successfully
+                                Giao dịch đã hoàn thành
                               </h3>
                               <p ng-if="acceptedTransaction" style="color: red; font-weight: bold">
-                                Important Note: The coins will enter the
-                                recipient's digital wallet only after the
-                                mining of one of the network users
+                                Lưu ý quan trọng: Các đồng tiền sẽ nhập
+                                ví kỹ thuật số của người nhận chỉ sau
+                                khai thác của một trong những người dùng mạng
                               </p>
 
                               <!-- 'display transaction' table -->
                               <h3 class="table-title" ng-if="acceptedTransaction">
-                                Invoicing:
+                                Lập hóa đơn:
                               </h3>
                               <table class="table table-striped" ng-if="acceptedTransaction">
                                 <tbody>
                                   <tr>
-                                    <td class="bold">sender:</td>
+                                    <td class="bold">Người gửi:</td>
                                     <td>{{ pubKey }}</td>
                                   </tr>
                                   <tr>
-                                    <td class="bold">addressee:</td>
+                                    <td class="bold">Địa chỉ:</td>
                                     <td>{{ pubKeyOfRecipient }}</td>
                                   </tr>
                                   <tr>
-                                    <td class="bold">Amount of coins:</td>
+                                    <td class="bold">Số tiền:</td>
                                     <td>{{ amountToTransfer }}</td>
                                   </tr>
                                 </tbody>
@@ -404,7 +405,7 @@
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                            closed
+                            Đóng
                           </button>
                         </div>
                       </div>
@@ -440,28 +441,23 @@
 
   <!-- Logout Modal-->
   <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
+    aria-hidden="true" ng-controller="logoutController">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+          <h5 class="modal-title" id="exampleModalLabel">Bạn muốn đăng xuất khỏi hệ thống?</h5>
           <button class="close" type="button" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">×</span>
           </button>
         </div>
-        <div class="modal-body">
-          Select "Logout" below if you are ready to end your current session.
-        </div>
+        <div class="modal-body">Chọn "Đăng xuất" nếu bạn muốn thoát khỏi ứng dụng.</div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" type="button" data-dismiss="modal">
-            Cancel
-          </button>
-          <a class="btn btn-primary" href="login.html">Logout</a>
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy bỏ</button>
+          <button type="button" ng-click="logout()" class="btn btn-primary">Đăng xuất</button>
         </div>
       </div>
     </div>
   </div>
-
   <!-- Bootstrap core JavaScript-->
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -480,6 +476,16 @@
     if (!publicKey) {
       window.location.href = "./login.html";
     }
+
+    ////////////////////////////////////////////////////////////////////
+    app.controller("logoutController", function ($scope, $http) {
+      $scope.logout = function () {
+        localStorage.removeItem("publicKey");
+        localStorage.removeItem("privateKey");
+
+        window.location.href = "./login.html";
+      };
+    });
 
     ////////////////////////////////////////////////////////////////////
     app.controller("walletController", function ($scope, $http) {

@@ -37,13 +37,13 @@
   <!-- Page Wrapper -->
   <div id="wrapper">
     <!-- Sidebar -->
-    <ul class="navbar-nav sidebar sidebar-dark accordion menu-left" id="accordionSidebar">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion menu-left" id="accordionSidebar">
       <!-- Sidebar - Brand -->
       <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
         <div class="sidebar-brand-icon rotate-n-15">
           <i class="fas fa-laugh-wink"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">Devil Coin</div>
+        <div class="sidebar-brand-text mx-3">Devil Coin<sup>2</sup></div>
       </a>
 
       <!-- Divider -->
@@ -68,7 +68,7 @@
         </a>
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="send-coin.html">Gửi tiền ảo</a>
+            <a class="collapse-item" href="send-coin.html">Gửi tiền</a>
             <a class="collapse-item" href="history.html">Lịch sử giao dịch</a>
           </div>
         </div>
@@ -168,7 +168,8 @@
             <li class="nav-item dropdown no-arrow">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="noMemberID">Douglas McGee</span>
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small"
+                  ng-controller="walletController">{{addressData}}</span>
                 <img class="img-profile rounded-circle" src="img/undraw_profile.svg" />
               </a>
               <!-- Dropdown - User Information -->
@@ -204,7 +205,7 @@
         <div class="container-fluid">
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Lịch sử giao dịch</h1>
+            <h1 class="h3 mb-0 text-gray-800">Lịch sử</h1>
           </div>
 
           <!-- Content Row -->
@@ -306,7 +307,7 @@
 
           <div class="card shadow mb-4" ng-controller="transactionHistoryController">
             <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Giao dịch</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Latest Transactions</h6>
             </div>
             <div class="card-body">
               <div class="table-responsive">
@@ -315,7 +316,7 @@
                     <tr>
                       <th>ID giao dịch</th>
                       <th>Số lượng</th>
-                      <th>Ngày gửi</th>
+                      <th>Ngày chuyển</th>
                       <th>Người gửi</th>
                       <th>Người nhận</th>
                     </tr>
@@ -324,7 +325,7 @@
                     <tr>
                       <th>ID giao dịch</th>
                       <th>Số lượng</th>
-                      <th>Ngày gửi</th>
+                      <th>Ngày chuyển</th>
                       <th>Người gửi</th>
                       <th>Người nhận</th>
                     </tr>
@@ -363,11 +364,11 @@
             </div>
           </div>
           <div ng-controller="miningController">
-            <div class="row" style=" padding-bottom: 24px">
+            <div class="row">
               <div class="col-2" data-toggle="modal" data-target="#miningModal"
                 title="By clicking this button you can enable all transactions awaiting approval">
-                <button id="mineButton" class="btn btn-primary btn-icon-split botton1" style="vertical-align: middle;">
-                  <span>Thực hiện đào</span>
+                <button id="mineButton" class="btn btn-primary btn-icon-split botton1" style="vertical-align: middle">
+                  <span>Tiến hành đào</span>
                 </button>
               </div>
             </div>
@@ -385,10 +386,10 @@
                       <span aria-hidden="true">×</span>
                     </button>
                   </div>
-                  <div class="modal-body">Bạn chắc mình muốn đào?</div>
+                  <div class="modal-body">Bạn có muốn thực hiện thao tác đào?</div>
                   <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">
-                      Không
+                      Từ chối
                     </button>
                     <button class="btn btn-primary" type="button" ng-click="mine()">Đồng ý</button>
                   </div>
@@ -404,6 +405,13 @@
   <!-- End of Main Content -->
 
   <!-- Footer -->
+  <footer class="sticky-footer bg-white mrTop-40">
+    <div class="container my-auto">
+      <div class="copyright text-center my-auto">
+        <span>Copyright &copy; Your Website 2021</span>
+      </div>
+    </div>
+  </footer>
   <!-- End of Footer -->
   </div>
   <!-- End of Content Wrapper -->
@@ -417,23 +425,19 @@
 
   <!-- Logout Modal-->
   <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
+    aria-hidden="true" ng-controller="logoutController">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+          <h5 class="modal-title" id="exampleModalLabel">Bạn muốn đăng xuất khỏi hệ thống?</h5>
           <button class="close" type="button" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">×</span>
           </button>
         </div>
-        <div class="modal-body">
-          Select "Logout" below if you are ready to end your current session.
-        </div>
+        <div class="modal-body">Chọn "Đăng xuất" nếu bạn muốn thoát khỏi ứng dụng.</div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" type="button" data-dismiss="modal">
-            Cancel
-          </button>
-          <a class="btn btn-primary" href="login.html">Logout</a>
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy bỏ</button>
+          <button type="button" ng-click="logout()" class="btn btn-primary">Đăng xuất</button>
         </div>
       </div>
     </div>
@@ -457,6 +461,16 @@
     if (!publicKey) {
       window.location.href = "./login.html";
     }
+
+    ////////////////////////////////////////////////////////////////////
+    app.controller('logoutController', function ($scope, $http) {
+      $scope.logout = function () {
+        localStorage.removeItem('publicKey');
+        localStorage.removeItem('privateKey');
+
+        window.location.href = "./login.html";
+      };
+    });
 
     ////////////////////////////////////////////////////////////////////
     app.controller("walletController", function ($scope, $http) {
