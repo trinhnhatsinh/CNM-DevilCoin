@@ -1,0 +1,76 @@
+.paddingTopBottom {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.padTop-40 {
+    padding-top: 40px;
+}
+
+.mrTop-40 {
+    margin-top: 40px;
+}
+
+.break-word {
+    word-break: break-word;
+}
+
+.main-wrapper {
+    height: 100vh;  
+  }
+
+.min-height {
+    min-height: 500px;
+}
+
+.over-text {
+  white-space: nowrap; 
+  width: 300px; 
+  overflow: hidden; 
+  border: 1px solid #000000;
+}
+
+.botton1 {
+    width: 160px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.introduce {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.introduce>.logo {
+    width: 120px;
+}
+
+.introduce>.name {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #595959;
+}
+
+.introduce>.description {
+    padding: 24px 64px;
+    text-align: center;
+}
+
+.btn-primary {
+    background: #fd7e14 !important;
+    border: 0;
+}
+
+.menu-left {
+    height: 100vh !important;
+    background: #fd7e14 !important;
+    position: sticky;
+    top: 0;
+    left: 0;
+}

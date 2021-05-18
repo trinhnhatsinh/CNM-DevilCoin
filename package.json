@@ -1,0 +1,38 @@
+{
+  "name": "blockchain",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "node_1": "nodemon --watch dev -e js dev/index.js 3001 http://localhost:3001",
+    "node_2": "nodemon --watch dev -e js dev/index.js 3002 http://localhost:3002",
+    "node_3": "nodemon --watch dev -e js dev/index.js 3003 http://localhost:3003",
+    "node_4": "nodemon --watch dev -e js dev/index.js 3004 http://localhost:3004",
+    "node_5": "nodemon --watch dev -e js dev/index.js 3005 http://localhost:3005"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "angular-chart.js": "^1.1.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "browserify": "^16.2.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "jade": "^1.11.0",
+    "mathjs": "^5.2.2",
+    "mongodb": "^3.1.8",
+    "mongoose": "^5.12.9",
+    "node-forge": "^0.10.0",
+    "nodemailer": "^4.6.8",
+    "nodemon": "^1.18.4",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
+    "sha256": "^0.2.0",
+    "socket.io": "^1.4.8",
+    "uniqid": "^5.0.3",
+    "uuid": "^3.3.2",
+    "validator": "^10.8.0"
+  }
+}
